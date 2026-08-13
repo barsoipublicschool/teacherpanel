@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barsoi Public School - Teacher Portal</title>
+    
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -126,13 +132,6 @@
             background: var(--accent-hover);
             box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
             transform: translateY(-2px);
-        }
-
-        .error-msg {
-            color: #ef4444;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            display: none;
         }
 
         /* --- DASHBOARD STYLES --- */
@@ -285,7 +284,6 @@
                 <input type="password" id="password" placeholder="Enter Password" required>
             </div>
             <button type="submit" class="btn-login">Log In</button>
-            <p class="error-msg" id="errorMsg">Invalid User ID or Password!</p>
         </form>
     </div>
 
@@ -344,10 +342,9 @@
         const loginScreen = document.getElementById('loginScreen');
         const dashboardScreen = document.getElementById('dashboardScreen');
         const loginForm = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('errorMsg');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        // Set dynamic copyright year
+        // Dynamic copyright year
         document.getElementById('year').textContent = new Date().getFullYear();
 
         window.onload = function() {
@@ -356,6 +353,7 @@
             }
         };
 
+        // Handle Login Submission with SweetAlert2
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const usernameInput = document.getElementById('username').value.trim();
@@ -363,21 +361,57 @@
 
             if (usernameInput === CORRECT_USER && passwordInput === CORRECT_PASS) {
                 localStorage.setItem('isTeacherLoggedIn', 'true');
-                showDashboard();
+                
+                // Success Popup
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Welcome!',
+                    text: 'Login Successful',
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    showDashboard();
+                });
+
             } else {
-                errorMsg.style.display = 'block';
+                // Error Popup
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Invalid User ID or Password!',
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    confirmButtonColor: '#6366f1'
+                });
             }
         });
 
+        // Handle Logout with SweetAlert2
         logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('isTeacherLoggedIn');
-            showLogin();
+            Swal.fire({
+                title: 'Logout?',
+                text: "Kya aap logout karna chahte hain?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Haan, Logout karein',
+                cancelButtonText: 'Cancel',
+                background: '#1e293b',
+                color: '#f8fafc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('isTeacherLoggedIn');
+                    showLogin();
+                }
+            });
         });
 
         function showDashboard() {
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'block';
-            errorMsg.style.display = 'none';
         }
 
         function showLogin() {
@@ -387,12 +421,13 @@
             document.getElementById('password').value = '';
         }
 
+        // Direct URL Routing Handler
         function navigateTo(moduleName) {
             let targetUrl = "";
 
             switch(moduleName) {
                 case 'Attendance':
-                    targetUrl = "https://barsoipublicschool.github.io/attendance/test.html";
+                    targetUrl = "https://barsoipublicschool.github.io/attendance/";
                     break;
                 case 'CW/HW':
                     targetUrl = "https://barsoipublicschool.github.io/homework/update.html";
@@ -410,7 +445,14 @@
                     targetUrl = "http://www.bps.in/studentprofile";
                     break;
                 default:
-                    alert("URL nahi mila!");
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Notice',
+                        text: 'URL nahi mila!',
+                        background: '#1e293b',
+                        color: '#f8fafc',
+                        confirmButtonColor: '#6366f1'
+                    });
                     return;
             }
 
