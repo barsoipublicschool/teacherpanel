@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Portal - Dashboard</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- LOGIN CARD STYLES --- */
+        .login-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        /* --- DASHBOARD STYLES --- */
+        .dashboard-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 2rem 1rem;
+            display: none; /* Initially Hidden */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .btn-logout {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background-color: #c0392b;
+        }
+
+        /* 2-Column Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.8rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            width: 50px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Mobile View (1 Column on small screens) */
+        @media (max-width: 600px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div class="login-container" id="loginScreen">
+        <h2><i class="fa-solid fa-user-gear"></i> Teacher Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">User ID</label>
+                <input type="text" id="username" placeholder="Enter User ID" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit" class="btn-login">Login</button>
+            <p class="error-msg" id="errorMsg">Invalid User ID or Password!</p>
+        </form>
+    </div>
+
+    <!-- 2. DASHBOARD SCREEN -->
+    <div class="dashboard-container" id="dashboardScreen">
+        <div class="header">
+            <h1><i class="fa-solid fa-chalkboard-user"></i> Teacher Panel</h1>
+            <button class="btn-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+
+        <!-- 2-by-2 Cards Layout -->
+        <div class="cards-grid">
+            
+            <div class="card" onclick="navigateTo('Attendance')">
+                <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="card-title">Mark Attendance</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('CW/HW')">
+                <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                <div class="card-title">Update CW/HW</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Study Materials')">
+                <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+                <div class="card-title">Update Study Materials</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Marks Entry')">
+                <div class="card-icon"><i class="fa-solid fa-file-signature"></i></div>
+                <div class="card-title">Marks Entry</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Teacher Profile')">
+                <div class="card-icon"><i class="fa-solid fa-id-badge"></i></div>
+                <div class="card-title">Teacher Profile</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Student Profile')">
+                <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="card-title">Student Profile</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Default Credentials (Isse aap apne hisaab se badal sakte hain)
+        const CORRECT_USER = "teacher";
+        const CORRECT_PASS = "1234";
+
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Check if already logged in (Persistent Session)
+        window.onload = function() {
+            if (localStorage.getItem('isTeacherLoggedIn') === 'true') {
+                showDashboard();
+            }
+        };
+
+        // Handle Login
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+
+            if (usernameInput === CORRECT_USER && passwordInput === CORRECT_PASS) {
+                localStorage.setItem('isTeacherLoggedIn', 'true');
+                showDashboard();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // Handle Logout
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('isTeacherLoggedIn');
+            showLogin();
+        });
+
+        function showDashboard() {
+            loginScreen.style.display = 'none';
+            dashboardScreen.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        function showLogin() {
+            dashboardScreen.style.display = 'none';
+            loginScreen.style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Card Click Handler
+        function navigateTo(moduleName) {
+            alert(moduleName + " section par click kiya gaya hai!");
+            // Yahan aap doosre HTML page ka link de sakte hain:
+            // window.location.href = moduleName.toLowerCase().replace(/ /g, "_") + ".html";
+        }
+    </script>
+</body>
+</html>
