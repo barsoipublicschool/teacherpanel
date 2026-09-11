@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barsoi Public School - Teacher Portal</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --accent-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+        }
+
+        /* --- LOGIN CONTAINER --- */
+        .login-container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            margin: auto;
+        }
+
+        .school-header {
+            margin-bottom: 2rem;
+        }
+
+        .school-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .login-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin-top: 0.5rem;
+        }
+
+        .btn-login:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* --- DASHBOARD STYLES --- */
+        .dashboard-container {
+            width: 100%;
+            max-width: 768px;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .header h1 {
+            font-size: 1.1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* 3 Columns Grid Layout for Icons */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem 0.6rem;
+            padding: 1rem 0;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        /* Individual Icon Color Variations */
+        .card:nth-child(1) .card-icon { color: #4f46e5; }
+        .card:nth-child(2) .card-icon { color: #059669; }
+        .card:nth-child(3) .card-icon { color: #ef4444; }
+        .card:nth-child(4) .card-icon { color: #3b82f6; }
+        .card:nth-child(5) .card-icon { color: #f59e0b; }
+        .card:nth-child(6) .card-icon { color: #9333ea; }
+
+        /* --- FOOTER STYLES --- */
+        .footer {
+            margin-top: 2rem;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            padding-top: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .cards-grid {
+                gap: 2rem 1.5rem;
+            }
+            .card-icon {
+                width: 75px;
+                height: 75px;
+                font-size: 2rem;
+            }
+            .card-title {
+                font-size: 0.85rem;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div class="login-container" id="loginScreen">
+        <div class="school-header">
+            <h1 class="school-title">BARSOI PUBLIC SCHOOL</h1>
+            <div class="login-subtitle">
+                <i class="fa-solid fa-user-tie"></i> Teacher Log In
+            </div>
+        </div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">User ID</label>
+                <input type="text" id="username" placeholder="Enter Teacher ID" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
+    </div>
+
+    <!-- 2. DASHBOARD SCREEN -->
+    <div class="dashboard-container" id="dashboardScreen">
+        <div class="header">
+            <h1>BARSOI PUBLIC SCHOOL</h1>
+            <button class="btn-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+
+        <!-- 3-Column Grid Layout (Match with Image) -->
+        <div class="cards-grid">
+            
+            <div class="card" onclick="navigateTo('Attendance')">
+                <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="card-title">Mark Attendance</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('CW/HW')">
+                <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                <div class="card-title">Update CW/HW</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Study Materials')">
+                <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+                <div class="card-title">Update Study Materials</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Notice')">
+                <div class="card-icon"><i class="fa-solid fa-file-signature"></i></div>
+                <div class="card-title">Update Notice</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Apply Leave')">
+                <div class="card-icon"><i class="fa-solid fa-id-badge"></i></div>
+                <div class="card-title">Apply Leave</div>
+            </div>
+
+            <div class="card" onclick="navigateTo('Student Profile')">
+                <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="card-title">Student Profile</div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER SECTION -->
+        <footer class="footer">
+            <p>&copy; <span id="year"></span> Barsoi Public School. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const CORRECT_USER = "teacher";
+        const CORRECT_PASS = "1234";
+
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Dynamic copyright year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        window.onload = function() {
+            if (localStorage.getItem('isTeacherLoggedIn') === 'true') {
+                showDashboard();
+            }
+        };
+
+        // Handle Login Submission with SweetAlert2
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+
+            if (usernameInput === CORRECT_USER && passwordInput === CORRECT_PASS) {
+                localStorage.setItem('isTeacherLoggedIn', 'true');
+                
+                // Success Popup
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Welcome!',
+                    text: 'Login Successful',
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    showDashboard();
+                });
+
+            } else {
+                // Error Popup
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Invalid User ID or Password!',
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    confirmButtonColor: '#6366f1'
+                });
+            }
+        });
+
+        // Handle Logout with SweetAlert2
+        logoutBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Logout?',
+                text: "Do you want to logout?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Haan, Logout karein',
+                cancelButtonText: 'Cancel',
+                background: '#1e293b',
+                color: '#f8fafc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('isTeacherLoggedIn');
+                    showLogin();
+                }
+            });
+        });
+
+        function showDashboard() {
+            loginScreen.style.display = 'none';
+            dashboardScreen.style.display = 'block';
+        }
+
+        function showLogin() {
+            dashboardScreen.style.display = 'none';
+            loginScreen.style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Direct URL Routing Handler
+        function navigateTo(moduleName) {
+            let targetUrl = "";
+
+            switch(moduleName) {
+                case 'Attendance':
+                    targetUrl = "https://barsoipublicschool.github.io/attendance";
+                    break;
+                case 'CW/HW':
+                    targetUrl = "https://barsoipublicschool.github.io/cwhw/update.html";
+                    break;
+                case 'Study Materials':
+                    targetUrl = "https://barsoipublicschool.github.io/aaa/update.html";
+                    break;
+                case 'Notice':
+                    targetUrl = "https://barsoipublicschool.github.io/noticeboard/update.html";
+                    break;
+                case 'Apply Leave':
+                    targetUrl = "https://barsoipublicschool.github.io/leave";
+                    break;
+                case 'Student Profile':
+                    targetUrl = "https://barsoipublicschool.github.io/admission/studentdetails.html";
+                    break;
+                default:
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Notice',
+                        text: 'URL Not found!',
+                        background: '#1e293b',
+                        color: '#f8fafc',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    return;
+            }
+
+            window.open(targetUrl, "_blank");
+        }
+    </script>
+</body>
+</html>
