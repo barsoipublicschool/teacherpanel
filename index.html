@@ -517,6 +517,10 @@
                     <div class="card-icon"><i class="fa-solid fa-users"></i></div>
                     <div class="card-title">Student Profile</div>
                 </div>
+                <div class="card" onclick="navigateTo('Marks Entry')">
+                    <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                    <div class="card-title">Update Marks</div>
+                </div>
 
             </div>
 
@@ -647,6 +651,9 @@
                     break;
                 case 'Student Profile':
                     targetUrl = "https://barsoipublicschool.github.io/admission/studentdetails.html";
+                    break;
+                case 'Marks Entry':
+                    targetUrl = "https://barsoipublicschool.github.io/result/superfastentry.html";
                     break;
                 default:
                     Swal.fire({
